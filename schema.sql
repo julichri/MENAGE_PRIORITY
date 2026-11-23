@@ -1,21 +1,26 @@
--- Priorité du ménage — exécuter dans Supabase > SQL Editor > New query
+-- Priorité du ménage — schéma Supabase idempotent
+-- À coller dans Supabase > SQL Editor puis exécuter.
 create extension if not exists pgcrypto;
+
 create table if not exists public.members (
   id uuid primary key default gen_random_uuid(),
   name text not null check (length(trim(name)) > 0),
-  availability jsonb not null default '{"0":{"matin":true,"midi":true,"apres-midi":true,"soir":true},"1":{"matin":true,"midi":true,"apres-midi":true,"soir":true},"2":{"matin":true,"midi":true,"apres-midi":true,"soir":true},"3":{"matin":true,"midi":true,"apres-midi":true,"soir":true},"4":{"matin":true,"midi":true,"apres-midi":true,"soir":true},"5":{"matin":true,"midi":true,"apres-midi":true,"soir":true},"6":{"matin":true,"midi":true,"apres-midi":true,"soir":true}}'::jsonb
+  availability jsonb not null default '{}'::jsonb,
+  color text not null default '#52745b',
+  is_adult boolean not null default true,
+  is_admin boolean not null default false
 );
 create table if not exists public.tasks (
   id uuid primary key default gen_random_uuid(),
   title text not null check (length(trim(title)) > 0),
-  -- Durée d'une occurrence (minutes); l'app calcule l'estimation hebdomadaire.
   minutes_per_week integer not null default 30 check (minutes_per_week between 1 and 600),
   freq_type text not null default 'weekly' check (freq_type in ('daily','weekly_n','weekly','biweekly','monthly')),
   freq_count integer not null default 1 check (freq_count between 1 and 7),
   assignee uuid references public.members(id) on delete set null,
   kind text not null default 'corvee' check (kind in ('corvee','loisir')),
+  adult_only boolean not null default false,
   preferred_days integer[] not null default '{}',
-  moment text check (moment is null or moment in ('matin','midi','soir')) ,
+  moment text check (moment is null or moment in ('matin','midi','soir')),
   preferred_slot text check (preferred_slot is null or preferred_slot in ('matin','midi','apres-midi','soir'))
 );
 create table if not exists public.ratings (
@@ -24,23 +29,28 @@ create table if not exists public.ratings (
   score integer not null check (score between 0 and 10),
   primary key (member_id, task_id)
 );
--- Evolution idempotente pour les installations déjà en service.
+
+-- Mises à niveau sûres pour les tables historiques.
+alter table public.members add column if not exists availability jsonb not null default '{}'::jsonb;
+alter table public.members add column if not exists color text not null default '#52745b';
+alter table public.members add column if not exists is_adult boolean not null default true;
+alter table public.members add column if not exists is_admin boolean not null default false;
 alter table public.tasks add column if not exists minutes_per_week integer not null default 30;
 alter table public.tasks add column if not exists freq_type text not null default 'weekly';
 alter table public.tasks add column if not exists freq_count integer not null default 1;
 alter table public.tasks add column if not exists assignee uuid references public.members(id) on delete set null;
 alter table public.tasks add column if not exists kind text not null default 'corvee';
+alter table public.tasks add column if not exists adult_only boolean not null default false;
 alter table public.tasks add column if not exists preferred_days integer[] not null default '{}';
 alter table public.tasks add column if not exists moment text;
 alter table public.tasks add column if not exists preferred_slot text;
-alter table public.members add column if not exists availability jsonb not null default '{}'::jsonb;
--- Les données historiques reçoivent des valeurs sûres via les valeurs par défaut.
--- RLS inchangé : activation sur les trois tables et politiques anon ci-dessous.
+
 alter table public.members enable row level security;
 alter table public.tasks enable row level security;
 alter table public.ratings enable row level security;
--- App familiale simple : accès anon complet. Adaptez ces règles si le projet
--- est exposé au public ou contient des informations sensibles.
+-- Application familiale sans authentification Supabase : mêmes politiques anon
+-- lecture/écriture que le schéma précédent. L'administration dans l'interface
+-- n'est pas une frontière de sécurité serveur; voir LISEZMOI.md.
 do $$
 declare t text; op text;
 begin
@@ -62,3 +72,5 @@ end $$;
 grant usage on schema public to anon;
 grant select, insert, update, delete on public.members, public.tasks, public.ratings to anon;
 
+-- Après migration, définir Julien en administrateur (insensible à la casse) :
+update public.members set is_admin = true where name ilike 'julien';
