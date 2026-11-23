@@ -2,7 +2,7 @@
   "name": "Priorité du ménage",
   "short_name": "Priorité ménage",
   "description": "Décider ensemble du quotidien du ménage.",
-  "start_url": "./index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f4f0e7",
