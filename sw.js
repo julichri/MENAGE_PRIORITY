@@ -1,4 +1,4 @@
-const CACHE='menage-shell-v11';
+const CACHE='menage-shell-v12';
 const SHELL=['./','./index.html','./manifest.json','./icon.svg'];
 const INDEX=new URL('./index.html',self.registration.scope).href;
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL))));
