@@ -27,19 +27,19 @@
 3. Cliquez **Tester la connexion**. Si le test réussit, c’est prêt. La connexion est mémorisée sur cet appareil.
 4. Ajoutez les personnes dans **Membres** et évaluez ensemble les tâches. Sept exemples sont ajoutés automatiquement lorsque la table des tâches est vide : corvées quotidiennes ou récurrentes et jeu en famille.
 5. Dans **Tâches**, ajoutez ou modifiez le temps par occurrence, la fréquence, la personne responsable, le type, les jours préférés et le créneau préféré (matin, midi, après-midi, soir ou indifférent). L’estimation hebdomadaire est affichée.
-6. Dans **Planning**, définissez pour chaque personne les créneaux du lundi au dimanche (Matin, Après-midi, Soir). Touchez un carré pour alterner **Indisponible → Libre → Incertain**. Le motif se répète chaque semaine par défaut; décochez l’option pour une disponibilité ponctuelle. Les états sont conservés sur l’appareil et synchronisés via Supabase lorsque `disponibilites` existe.
-7. Le planning évite les indisponibilités, favorise les créneaux libres et n’utilise les créneaux incertains qu’en dernier recours (marqueur **?**). Il indique les tâches non placées et signale une journée sans disponibilité; les quotidiennes sont proposées chaque jour seulement si un créneau est utilisable. Les tâches récurrentes gardent un espacement et les loisirs privilégient vendredi soir/week-end. **Régénérer** refait la proposition. Les coches sont locales à l’appareil et à la semaine ISO courante.
+6. Dans **Disponibilités**, définissez pour chaque personne les plages libres de 30 minutes, du lundi au dimanche, de 8 h à 22 h. Touchez ou faites glisser sur la grille (tactile ou souris) pour cocher/décocher. Le motif se répète chaque semaine par défaut; décochez l’option pour une disponibilité ponctuelle. Les états sont conservés sur l’appareil et dans le JSON `members.availability` de Supabase.
+7. Le planning place une tâche uniquement dans une plage contiguë libre suffisante, par pas de 30 minutes; une tâche plus longue que les plages libres reste non planifiée. Il indique les tâches non placées et signale une journée sans disponibilité; les quotidiennes sont proposées chaque jour seulement si un créneau est utilisable. Les tâches récurrentes gardent un espacement et les loisirs privilégient vendredi soir/week-end. **Régénérer** refait la proposition. Les coches sont locales à l’appareil et à la semaine ISO courante.
 7. L’onglet **Compte rendu** classe les priorités, affiche la durée hebdomadaire, le responsable et le type, montre le détail par personne et permet de copier un résumé.
 
 ## Disponibilités et mise à jour
-- Grille cliquable par membre, jour et créneau; états rouge (indisponible), vert (libre), orange (incertain). Libre est l’état initial. Le réglage de répétition hebdomadaire est activé par défaut.
+- Grille par membre : 7 jours en colonnes et 28 lignes de 30 minutes de 8 h à 22 h. Touchez ou faites glisser à la souris ou au doigt pour sélectionner/désélectionner. Les anciens créneaux sont migrés ainsi : Matin 8–11 h, Midi 11–14 h, Après-midi 14–18 h, Soir 18–22 h. Le format Supabase existant `members.availability` (JSONB) est conservé; le JSON contient désormais les 7 tableaux de 28 demi-heures. Le réglage de répétition hebdomadaire est activé par défaut.
 - Les disponibilités restent disponibles en local si la table Supabase manque. Dans ce cas, l’application affiche un message; exécutez de nouveau le fichier complet `schema.sql` dans **Supabase → SQL Editor → New query → Run** pour créer la table et ses politiques RLS.
-- Après mise à jour des fichiers de l’application, rechargez la page; le cache du service worker est renouvelé (`menage-shell-v6`).
+- Après mise à jour des fichiers de l’application, rechargez la page; le cache du service worker est renouvelé (`menage-shell-v10`).
 
 ## Disponibilités et mise à jour
 - Pour activer la synchronisation des disponibilités, relancez le fichier complet `schema.sql` dans **Supabase → SQL Editor → New query → Run**. La table `disponibilites` et ses politiques RLS sont créées de manière idempotente.
 - Si cette table n’existe pas, l’application conserve les choix sur cet appareil et affiche un message de synchronisation; relancez `schema.sql`.
-- Le cache hors ligne a été renouvelé (`menage-shell-v6`); rechargez la PWA après la mise à jour.
+- Le cache hors ligne a été renouvelé (`menage-shell-v10`); rechargez la PWA après la mise à jour.
 
 ## Nouveautés de cette version
 - Onglet **Disponibilités** : grille par membre, par jour (lundi à dimanche) et par créneau (matin, midi, après-midi, soir), avec préréglages « Tout dispo », « Soirs + week-end » et « Week-end seulement ». Les nouvelles personnes sont disponibles partout par défaut.
