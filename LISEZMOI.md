@@ -15,7 +15,7 @@
 ## À savoir — sécurité
 L’application familiale n’utilise pas d’authentification Supabase : le rôle d’administrateur contrôle l’interface locale, **pas** l’API. Les politiques anon de `schema.sql` autorisent la lecture et l’écriture complètes. Toute personne ayant l’URL et la clé anon peut accéder aux données. N’utilisez pas ce modèle pour des données sensibles ou un site public sans renforcer l’authentification et les politiques RLS côté serveur.
 
-Après déploiement, rechargez la PWA. Le cache du service worker est `menage-shell-v13`.
+Après déploiement, rechargez la PWA. Le cache du service worker est `menage-shell-v15`. Le cache Planning a été renouvelé pour recalculer les répartitions mises à jour. La génération classe les tâches non évitables d’abord, puis par priorité et durée décroissante, et rééquilibre les occurrences mobiles entre membres adultes ou enfants de même catégorie, dans la limite des disponibilités et des affectations fixes. L’équilibrage des jours utilise la charge relative à la capacité disponible. Les onglets visibles dépendent du profil connecté : un administrateur conserve tous les onglets lorsqu’il filtre le planning sur un enfant; les profils enfants ne voient que Planning.
 
 ## Fichiers
 `index.html`, `schema.sql`, `sw.js`, `manifest.json`, `icon.svg` et ce fichier sont inclus à la racine de l’archive.
