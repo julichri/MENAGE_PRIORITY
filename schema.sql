@@ -2,7 +2,8 @@
 create extension if not exists pgcrypto;
 create table if not exists public.members (
   id uuid primary key default gen_random_uuid(),
-  name text not null check (length(trim(name)) > 0)
+  name text not null check (length(trim(name)) > 0),
+  availability jsonb not null default '{"0":{"matin":true,"midi":true,"apres-midi":true,"soir":true},"1":{"matin":true,"midi":true,"apres-midi":true,"soir":true},"2":{"matin":true,"midi":true,"apres-midi":true,"soir":true},"3":{"matin":true,"midi":true,"apres-midi":true,"soir":true},"4":{"matin":true,"midi":true,"apres-midi":true,"soir":true},"5":{"matin":true,"midi":true,"apres-midi":true,"soir":true},"6":{"matin":true,"midi":true,"apres-midi":true,"soir":true}}'::jsonb
 );
 create table if not exists public.tasks (
   id uuid primary key default gen_random_uuid(),
@@ -14,7 +15,8 @@ create table if not exists public.tasks (
   assignee uuid references public.members(id) on delete set null,
   kind text not null default 'corvee' check (kind in ('corvee','loisir')),
   preferred_days integer[] not null default '{}',
-  moment text check (moment is null or moment in ('matin','midi','soir'))
+  moment text check (moment is null or moment in ('matin','midi','soir')) ,
+  preferred_slot text check (preferred_slot is null or preferred_slot in ('matin','midi','apres-midi','soir'))
 );
 create table if not exists public.ratings (
   member_id uuid not null references public.members(id) on delete cascade,
@@ -30,6 +32,8 @@ alter table public.tasks add column if not exists assignee uuid references publi
 alter table public.tasks add column if not exists kind text not null default 'corvee';
 alter table public.tasks add column if not exists preferred_days integer[] not null default '{}';
 alter table public.tasks add column if not exists moment text;
+alter table public.tasks add column if not exists preferred_slot text;
+alter table public.members add column if not exists availability jsonb not null default '{}'::jsonb;
 -- Les données historiques reçoivent des valeurs sûres via les valeurs par défaut.
 -- RLS inchangé : activation sur les trois tables et politiques anon ci-dessous.
 alter table public.members enable row level security;
@@ -57,3 +61,4 @@ begin
 end $$;
 grant usage on schema public to anon;
 grant select, insert, update, delete on public.members, public.tasks, public.ratings to anon;
+
