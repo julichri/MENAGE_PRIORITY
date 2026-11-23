@@ -1,1 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#315b45"/><path d="M17 30 32 17l15 13v19H17z" fill="#f4f0e7"/><path d="m25 38 5 5 10-12" fill="none" stroke="#ba593b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Maison stylisée avec toit en tuiles, façade taupe, porte blanche et hublot">
+ <defs>
+  <linearGradient id="ground" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f5f1e8"/><stop offset="1" stop-color="#e8e0d1"/></linearGradient>
+  <linearGradient id="panel" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#827d73"/><stop offset="1" stop-color="#706d66"/></linearGradient>
+  <linearGradient id="door" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffefa"/><stop offset="1" stop-color="#eae7df"/></linearGradient>
+  <pattern id="tiles" width="42" height="25" patternUnits="userSpaceOnUse">
+   <path d="M0 1H42 M0 13H21 M21 13H42 M0 24H42" fill="none" stroke="#777973" stroke-width="2" opacity=".62"/>
+   <path d="M0 2H42 M21 14V24 M0 14V24" fill="none" stroke="#252d2f" stroke-width="1.4" opacity=".8"/>
+  </pattern>
+  <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feGaussianBlur stdDeviation="9"/></filter>
+  <clipPath id="round"><rect width="512" height="512" rx="112"/></clipPath>
+ </defs>
+ <g clip-path="url(#round)">
+  <rect width="512" height="512" fill="url(#ground)"/>
+  <circle cx="405" cy="100" r="106" fill="#fffaf0" opacity=".38"/>
+  <ellipse cx="261" cy="443" rx="183" ry="22" fill="#454847" opacity=".2" filter="url(#shadow)"/>
+  <!-- tiled roof -->
+  <path d="M49 193 256 72l207 121-14 24L256 101 63 217Z" fill="#353b3c"/>
+  <path d="M57 193 256 79l199 114-12 22L256 100 69 215Z" fill="url(#tiles)"/>
+  <path d="m256 78 199 115-12 22L256 100Z" fill="#252d2f" opacity=".28"/>
+  <path d="M47 195 256 73l209 122" fill="none" stroke="#202729" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M68 215 256 105l188 110" fill="none" stroke="#4d5352" stroke-width="4"/>
+  <!-- warm right-hand wall and central taupe-grey facade -->
+  <path d="M79 195h354v239H79z" fill="#cbbda4"/>
+  <path d="M326 195h107v239H326z" fill="#e5dac5"/>
+  <path d="M99 195h227v239H99z" fill="url(#panel)"/>
+  <path d="M326 195v239" stroke="#b4a78f" stroke-width="3"/>
+  <path d="M92 430h350" stroke="#b6a98f" stroke-width="7" stroke-linecap="round"/>
+  <!-- circular porthole -->
+  <circle cx="226" cy="240" r="25" fill="#e9e6df" stroke="#4c4c47" stroke-width="5"/>
+  <circle cx="226" cy="240" r="18" fill="#9db0b1"/>
+  <path d="M215 240a11 11 0 0 1 11-11" fill="none" stroke="#e5f0eb" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="226" cy="240" r="3" fill="#dce8e3" opacity=".9"/>
+  <!-- white front door with a slim vertical sidelight -->
+  <rect x="151" y="274" width="130" height="156" rx="5" fill="#5b5b55" opacity=".42"/>
+  <rect x="145" y="268" width="127" height="158" rx="5" fill="url(#door)" stroke="#d3d0c7" stroke-width="4"/>
+  <path d="M158 282v130" stroke="#fff" stroke-width="3" opacity=".8"/>
+  <rect x="158" y="282" width="96" height="126" rx="2" fill="#f8f7f1" stroke="#ddd9cf" stroke-width="2"/>
+  <path d="M166 293h80M166 300h80" stroke="#e5e2d9" stroke-width="2"/>
+  <circle cx="240" cy="347" r="4" fill="#9a8665"/>
+  <rect x="279" y="276" width="29" height="150" rx="3" fill="#f5f4ee" stroke="#d4d0c6" stroke-width="3"/>
+  <rect x="284" y="283" width="19" height="136" rx="2" fill="#91a7a8"/>
+  <path d="M289 286v130" stroke="#dce9e5" stroke-width="3" opacity=".8"/>
+  <path d="M137 429h179" stroke="#d6cbb8" stroke-width="8" stroke-linecap="round"/>
+  <!-- simple wall detail on the cream extension -->
+  <path d="M348 243h60" stroke="#d4c7b2" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+  <path d="M348 255h42" stroke="#d4c7b2" stroke-width="3" stroke-linecap="round" opacity=".65"/>
+ </g>
+</svg>

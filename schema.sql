@@ -18,6 +18,7 @@ create table if not exists public.tasks (
   freq_count integer not null default 1 check (freq_count between 1 and 7),
   assignee uuid references public.members(id) on delete set null,
   kind text not null default 'corvee' check (kind in ('corvee','loisir')),
+  need_type text not null default 'secondaire' check (need_type in ('primaire','secondaire','tertiaire')),
   adult_only boolean not null default false,
   audience text not null default 'all' check (audience in ('all','adults','children')),
   preferred_days integer[] not null default '{}',
@@ -46,6 +47,7 @@ alter table public.tasks add column if not exists freq_type text not null defaul
 alter table public.tasks add column if not exists freq_count integer not null default 1;
 alter table public.tasks add column if not exists assignee uuid references public.members(id) on delete set null;
 alter table public.tasks add column if not exists kind text not null default 'corvee';
+alter table public.tasks add column if not exists need_type text not null default 'secondaire';
 alter table public.tasks add column if not exists adult_only boolean not null default false;
 alter table public.tasks add column if not exists audience text not null default 'all';
 alter table public.tasks add column if not exists preferred_days integer[] not null default '{}';
@@ -60,6 +62,9 @@ update public.tasks set adult_only=(audience='adults');
 
 do $$
 begin
+  if not exists (select 1 from pg_constraint where conrelid='public.tasks'::regclass and conname='tasks_need_type_check') then
+    alter table public.tasks add constraint tasks_need_type_check check (need_type in ('primaire','secondaire','tertiaire'));
+  end if;
   if not exists (select 1 from pg_constraint where conrelid='public.tasks'::regclass and conname='tasks_audience_check') then
     alter table public.tasks add constraint tasks_audience_check check (audience in ('all','adults','children'));
   end if;
