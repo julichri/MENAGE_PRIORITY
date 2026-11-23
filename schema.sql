@@ -19,9 +19,15 @@ create table if not exists public.tasks (
   assignee uuid references public.members(id) on delete set null,
   kind text not null default 'corvee' check (kind in ('corvee','loisir')),
   adult_only boolean not null default false,
+  audience text not null default 'all' check (audience in ('all','adults','children')),
   preferred_days integer[] not null default '{}',
   moment text check (moment is null or moment in ('matin','midi','soir')),
-  preferred_slot text check (preferred_slot is null or preferred_slot in ('matin','midi','apres-midi','soir'))
+  preferred_slot text check (preferred_slot is null or preferred_slot in ('matin','midi','apres-midi','soir')),
+  preferred_start time,
+  preferred_end time,
+  check (preferred_start is null or (preferred_start >= time '08:00' and preferred_start < time '22:00')),
+  check (preferred_end is null or (preferred_end > time '08:00' and preferred_end <= time '22:00')),
+  check (preferred_start is null or preferred_end is null or preferred_end > preferred_start)
 );
 create table if not exists public.ratings (
   member_id uuid not null references public.members(id) on delete cascade,
@@ -41,9 +47,32 @@ alter table public.tasks add column if not exists freq_count integer not null de
 alter table public.tasks add column if not exists assignee uuid references public.members(id) on delete set null;
 alter table public.tasks add column if not exists kind text not null default 'corvee';
 alter table public.tasks add column if not exists adult_only boolean not null default false;
+alter table public.tasks add column if not exists audience text not null default 'all';
 alter table public.tasks add column if not exists preferred_days integer[] not null default '{}';
 alter table public.tasks add column if not exists moment text;
 alter table public.tasks add column if not exists preferred_slot text;
+alter table public.tasks add column if not exists preferred_start time;
+alter table public.tasks add column if not exists preferred_end time;
+
+-- Migrer les anciennes tâches adultes_only en gardant les choix déjà explicites.
+update public.tasks set audience='adults' where adult_only is true and audience='all';
+update public.tasks set adult_only=(audience='adults');
+
+do $$
+begin
+  if not exists (select 1 from pg_constraint where conrelid='public.tasks'::regclass and conname='tasks_audience_check') then
+    alter table public.tasks add constraint tasks_audience_check check (audience in ('all','adults','children'));
+  end if;
+  if not exists (select 1 from pg_constraint where conrelid='public.tasks'::regclass and conname='tasks_preferred_start_check') then
+    alter table public.tasks add constraint tasks_preferred_start_check check (preferred_start is null or (preferred_start >= time '08:00' and preferred_start < time '22:00'));
+  end if;
+  if not exists (select 1 from pg_constraint where conrelid='public.tasks'::regclass and conname='tasks_preferred_end_check') then
+    alter table public.tasks add constraint tasks_preferred_end_check check (preferred_end is null or (preferred_end > time '08:00' and preferred_end <= time '22:00'));
+  end if;
+  if not exists (select 1 from pg_constraint where conrelid='public.tasks'::regclass and conname='tasks_preferred_range_check') then
+    alter table public.tasks add constraint tasks_preferred_range_check check (preferred_start is null or preferred_end is null or preferred_end > preferred_start);
+  end if;
+end $$;
 
 alter table public.members enable row level security;
 alter table public.tasks enable row level security;
