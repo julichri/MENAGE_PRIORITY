@@ -1,4 +1,4 @@
-const CACHE='menage-shell-v29';
+const CACHE='menage-shell-v30';
 const SHELL=['./','./index.html','./manifest.json','./icon.svg','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./icon-512-maskable.png'];
 const INDEX=new URL('./index.html',self.registration.scope).href;
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL))));
